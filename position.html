@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/output.css')}}">
+</head>
+<body>
+    <div class="w-screen h-screen flex flex-col justify-center items-center gap-10">
+        <form action="/" class="w-1/3 text-left">
+            <button type="submit" class="underline"><- back to dashboard</button>
+        </form>
+        {%with messages = get_flashed_messages()%}
+            {%for message in messages%}
+                <p class="text-black">{{message}}</p>
+            {%endfor%}
+        {%endwith%}
+        <div class="w-1/3">
+            <h1 class="w-full text-center">Position Management</h1>
+            <form action="/add-position" method="post" class="flex flex-col gap-5">
+                <label for="posName">Position Name</label>
+                <input type="text" class="border rounded px-2" name="posName" value="{{posName}}" required>
+                <label for="numOfPositions">Number of Positions</label>
+                <input type="number" class="border rounded px-2" name="numOfPositions" value="{{numOfPositions}}" required>
+                <button type="submit" class="bg-blue-300 rounded p-2">Add Position</button>
+            </form>
+        </div>
+        <div class="w-full flex flex-col justify-center items-center">
+            <p>CURRENT POSITIONS</p>
+            <form action="/search-position" method="post" class="w-1/3 flex gap-2">
+                <input type="text" name="query" class="border rounded px-2 w-full" value="{{query}}">
+                <button type="submit"  class="bg-blue-300 rounded p-2">Search</button>
+            </form>
+            <table class="w-2/3">
+                <tr><td class="w-1/3">Position Name</td><td class="w-1/3">Number of Positions</td><td class="w-1/3">Position Status</td><td>Actions</td></tr>
+                {%for position in positions%}
+                <tr>
+                    <td>{{position['posName']}}</td>
+                    <td>{{position['numOfPositions']}}</td>
+                    <td>{{position['posStat']}}</td>
+                    <td class="flex gap-2">
+                        <form action="/update-position" method="get">
+                            <input type="hidden" name="posName" value="{{position['posName']}}">
+                            <input type="hidden" name="numOfPositions" value="{{position['numOfPositions']}}">
+                            <input type="hidden" name="posStat" value="{{position['posStat']}}">
+                            <input type="hidden" name="posID" value="{{position['posID']}}">
+                            <button type="submit" class="bg-blue-300 rounded p-2">Update</button>
+                        </form>
+                        <form action="/deactivate-position" method="post">
+                            <input type="hidden" name="posID" value="{{position['posID']}}">
+                            <button type="submit" class="bg-blue-300 rounded p-2">Deactivate</button>
+                        </form>
+                    </td>
+                </tr>
+                {%endfor%}
+            </table>
+        </div>
+    </div>
+</body>
+</html>
